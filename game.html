@@ -14,19 +14,19 @@ source: https://gist.github.com/tanmaykm/5111225
 
 		</style>	
 		<script>
+			for(i in range(5)){
+				for(j in range(5)){
+					if(land[i][j]!=0)
+						continue;
+					else
+						land[i][j]=0;
+				}
+			}
 			function log_msg(msg) {
 				console.log( msg);
 			}
 			var s; //socket object for connection
 			function doInit() {
-				for(i in range(5)){
-					for(j in range(5)){
-						if(land[i][j]!=0)
-							continue;
-						else
-							land[i][j]=0;
-					}
-				}
 				try {
 					var host = "ws://localhost:4040/"; //設定socker server的ip:port
 					/*if(window.location.hostname) {
@@ -76,19 +76,16 @@ source: https://gist.github.com/tanmaykm/5111225
 			}
 			
 			//設定格子的符號
-			function setCell(id,sign,value=0) {
+			function setCell(id,sign,value) {
 				if(sign=="BLUE")
-					value--;
+					document.getElementById(id).style.backgroundColor="blue";
+					//document.getElementById(id).innerHTML = "<font color=blue>" + sign[0] + "</font>";
+				else if(sign=="RED")
+					document.getElementById(id).style.backgroundColor="red";
+					//document.getElementById(id).innerHTML = "<font color=red>" + sign[0] + "</font>";
 				else
-					value++;
-
-				if(value<0)
-					document.getElementById(id).innerHTML = "<font color=blue>" + value + "</font>";
-				else if(value>0)
-					document.getElementById(id).innerHTML = "<font color=red>" + value + "</font>";
-				else
-				document.getElementById(id).innerHTML = " ";
-					//"<style='font-size:50px;color:red'>.";
+					document.getElementById(id).style.backgroundColor="blue";
+					//document.getElementById(id).innerHTML = " ";
 				//ce.value=sign;
 			}
 			function start(){
