@@ -19,6 +19,14 @@ source: https://gist.github.com/tanmaykm/5111225
 			}
 			var s; //socket object for connection
 			function doInit() {
+				for(i in range(5)){
+					for(j in range(5)){
+						if(land[i][j]!=0)
+							continue;
+						else
+							land[i][j]=0;
+					}
+				}
 				try {
 					var host = "ws://localhost:4040/"; //設定socker server的ip:port
 					/*if(window.location.hostname) {
@@ -40,7 +48,7 @@ source: https://gist.github.com/tanmaykm/5111225
 						//解讀各段訊息的內容
 						cellID=strs[0]; //個子的ID
 						cellSign=strs[1]; //使用的符號
-						setCell(cellID,cellSign) //改格子的符號
+						setCell(cellID,cellSign,cellID); //改格子的符號
 					};
 				} catch (ex) {
 					log_msg("connection exception:" + ex);
@@ -52,32 +60,59 @@ source: https://gist.github.com/tanmaykm/5111225
 				cells.forEach(function(el) {
 					el.onclick=function() { 
 						id=this.id;
+						//取得使用的符號
+						let mySign = document.getElementById('sign').value;
+						//把格子id跟使用的符號傳給socket server
+						s.send(id+","+mySign);
 						//console.log(id);
-						if(this.innerHTML=='.') { //若格子尚未被選
+						/*if(this.innerHTML=='.') { //若格子尚未被選
 							//取得使用的符號
 							let mySign = document.getElementById('sign').value;
 							//把格子id跟使用的符號傳給socket server
 							s.send(id+","+mySign);
-						}
+						}*/
 					}
 				});
 			}
 			
 			//設定格子的符號
-			function setCell(id,sign) {
+			function setCell(id,sign,value=0) {
 				if(sign=="BLUE")
-					document.getElementById(id).innerHTML = "<font color=blue>" + sign + "</font>";
-				
-				//"<style='font-size:50px;color:red'>.";
+					value--;
+				else
+					value++;
+
+				if(value<0)
+					document.getElementById(id).innerHTML = "<font color=blue>" + value + "</font>";
+				else if(value>0)
+					document.getElementById(id).innerHTML = "<font color=red>" + value + "</font>";
+				else
+				document.getElementById(id).innerHTML = " ";
+					//"<style='font-size:50px;color:red'>.";
 				//ce.value=sign;
+			}
+			function start(){
+				//   按下 start 後 id 為 timer 的 DIV 內容可以開始倒數到到 0。 
+				var timer = document.querySelector("#timer");
+				var number = 30;
+				setInterval(function(){
+					number -- ;
+					if(number <= 0 )
+					number = 0;
+					timer.innerText = number + 0 }, 1000);
 			}
 		</script>		
 	</head>
 <body onload="doInit()">
 	搶地遊戲<br/>
-	玩家(BLUE or RED)<input type='text' value='BLUE' id='sign'>
+	玩家(BLUE or RED)<input type='text' value='BLUE' id='sign'><br/>
+	剩餘時間
+	<div id="timer">
+		30
+	</div>
+	<button onclick="start()">start</button>
 	<table border="1" width="250px" height="250px">
-	<tr><td class='cell' id='00'>.</td><td  class='cell' id='10'>.</td><td  class='cell' id='20'>.</td>.</td><td  class='cell' id='30'>.</td><td  class='cell' id='40'>.</td></tr>
+	<tr><td class='cell' id='00' value=0>.</td><td  class='cell' id='10'>.</td><td  class='cell' id='20'>.</td>.</td><td  class='cell' id='30'>.</td><td  class='cell' id='40'>.</td></tr>
 	<tr><td class='cell' id='01'>.</td><td  class='cell' id='11'>.</td><td  class='cell' id='21'>.</td>.</td><td  class='cell' id='31'>.</td><td  class='cell' id='41'>.</td></tr>
 	<tr><td class='cell' id='02'>.</td><td  class='cell' id='12'>.</td><td  class='cell' id='22'>.</td>.</td><td  class='cell' id='32'>.</td><td  class='cell' id='42'>.</td></tr>
 	<tr><td class='cell' id='03'>.</td><td  class='cell' id='13'>.</td><td  class='cell' id='23'>.</td>.</td><td  class='cell' id='33'>.</td><td  class='cell' id='43'>.</td></tr>
